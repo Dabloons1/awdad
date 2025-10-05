@@ -127,60 +127,12 @@ class HookEntry : IXposedHookLoadPackage {
     }
 
     private fun hookGameFunctions(lpparam: XC_LoadPackage.LoadPackageParam) {
-        try {
-            // Hook player health/damage functions for God Mode
-            XposedHelpers.findAndHookMethod(
-                "PlayerController",
-                lpparam.classLoader,
-                "TakeDamage",
-                Float::class.java,
-                object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-                        // Check if God Mode is enabled
-                        // This would need to communicate with the ImGui menu
-                        XposedBridge.log("SoulStrikeFloatingMenu: Player taking damage - God Mode check")
-                    }
-                }
-            )
-        } catch (e: Exception) {
-            XposedBridge.log("SoulStrikeFloatingMenu: Player damage hook failed: ${e.message}")
-        }
-
-        try {
-            // Hook ammo consumption for Infinite Ammo
-            XposedHelpers.findAndHookMethod(
-                "WeaponController",
-                lpparam.classLoader,
-                "ConsumeAmmo",
-                Int::class.java,
-                object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-                        // Check if Infinite Ammo is enabled
-                        XposedBridge.log("SoulStrikeFloatingMenu: Ammo consumption - Infinite Ammo check")
-                    }
-                }
-            )
-        } catch (e: Exception) {
-            XposedBridge.log("SoulStrikeFloatingMenu: Ammo consumption hook failed: ${e.message}")
-        }
-
-        try {
-            // Hook movement speed for Speed Hack
-            XposedHelpers.findAndHookMethod(
-                "PlayerMovement",
-                lpparam.classLoader,
-                "Move",
-                Float::class.java,
-                Float::class.java,
-                object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-                        // Apply speed multiplier
-                        XposedBridge.log("SoulStrikeFloatingMenu: Player movement - Speed Hack check")
-                    }
-                }
-            )
-        } catch (e: Exception) {
-            XposedBridge.log("SoulStrikeFloatingMenu: Movement speed hook failed: ${e.message}")
-        }
+        // Temporarily disable game-specific hooks to prevent ClassNotFoundException
+        // These hooks will be re-enabled once we identify the correct class names
+        XposedBridge.log("SoulStrikeFloatingMenu: Game-specific hooks disabled to prevent crashes")
+        XposedBridge.log("SoulStrikeFloatingMenu: Focus on floating menu display first")
+        
+        // TODO: Re-enable these hooks once we have the correct class names from the game
+        // For now, the floating menu should work without these hooks
     }
 }

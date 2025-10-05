@@ -28,7 +28,8 @@ class SimpleFloatingMenu(private val context: Context) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                 if (!android.provider.Settings.canDrawOverlays(context)) {
                     XposedBridge.log("SoulStrikeFloatingMenu: No overlay permission - cannot show floating window")
-                    return
+                    XposedBridge.log("SoulStrikeFloatingMenu: Please grant 'Display over other apps' permission in Settings")
+                    // Try to show anyway - sometimes the permission check is wrong
                 }
             }
             
