@@ -72,7 +72,13 @@ class HookEntry : IXposedHookLoadPackage {
                 override fun afterHookedMethod(param: MethodHookParam) {
                     XposedBridge.log("SoulStrikeFloatingMenu: Application onCreate hooked")
                     val app = param.thisObject as android.app.Application
-                    showFloatingMenu(app)
+                    
+                    // Only show menu if not running through security proxy
+                    if (!app.javaClass.name.contains("Proxy") && !app.javaClass.name.contains("Security")) {
+                        showFloatingMenu(app)
+                    } else {
+                        XposedBridge.log("SoulStrikeFloatingMenu: Skipping menu creation due to security proxy")
+                    }
                 }
             }
         )
@@ -105,6 +111,12 @@ class HookEntry : IXposedHookLoadPackage {
             if (floatingMenu == null) {
                 XposedBridge.log("SoulStrikeFloatingMenu: Creating floating menu for context: ${context.javaClass.name}")
                 
+                // Check if we're running through a security proxy
+                if (context.javaClass.name.contains("Proxy") || context.javaClass.name.contains("Security")) {
+                    XposedBridge.log("SoulStrikeFloatingMenu: WARNING - Running through security proxy: ${context.javaClass.name}")
+                    XposedBridge.log("SoulStrikeFloatingMenu: This may interfere with overlay permissions")
+                }
+                
                 // Ensure we have a valid context
                 val appContext = context.applicationContext ?: context
                 floatingMenu = SimpleFloatingMenu(appContext)
@@ -113,7 +125,7 @@ class HookEntry : IXposedHookLoadPackage {
                 android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
                     try {
                         floatingMenu?.show()
-                        XposedBridge.log("SoulStrikeFloatingMenu: Floating menu created and shown")
+                        XposedBridge.log("SoulStrikeFloatingMenu: Floating menu creation attempted")
                     } catch (e: Exception) {
                         XposedBridge.log("SoulStrikeFloatingMenu: Error showing floating menu: ${e.message}")
                         e.printStackTrace()
